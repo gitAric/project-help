@@ -79,6 +79,9 @@ SERVICE_MANIFESTS = {
 DOC_PREFIXES = ("readme", "contributing", "architecture", "design", "adr", "runbook")
 API_SUFFIXES = (".proto", ".graphql", ".gql", ".wsdl", ".avsc", ".avdl")
 DEPLOY_SUFFIXES = (".tf", ".tfvars")
+TEST_DIRS = {"test", "tests", "spec", "specs", "e2e", "integration", "integration-tests"}
+MIGRATION_DIRS = {"migration", "migrations", "schema", "schemas", "ddl"}
+OBSERVABILITY_TERMS = {"observability", "telemetry", "metrics", "tracing", "prometheus", "grafana", "opentelemetry", "otel"}
 ENTRYPOINT_NAMES = {
     "main.py",
     "app.py",
@@ -118,6 +121,10 @@ def parse_args() -> argparse.Namespace:
         default="markdown",
         help="Output format (default: markdown)",
     )
+    parser.add_argument(
+        "--focus-path",
+        help="Scan only this repository-relative directory while preserving a bounded scope",
+    )
     return parser.parse_args()
 
 
@@ -131,11 +138,12 @@ def relative_depth(root: Path, directory: Path) -> int:
 def classify(path: Path) -> set[str]:
     name = path.name
     lower = name.lower()
+    parts = {part.lower() for part in path.parts}
     categories: set[str] = set()
 
     if name in MANIFEST_NAMES or lower.endswith((".sln", ".csproj", ".fsproj")):
         categories.add("build_and_dependency")
-    if lower.startswith(DOC_PREFIXES) or "docs" in {part.lower() for part in path.parts}:
+    if lower.startswith(DOC_PREFIXES) or "docs" in parts:
         if path.suffix.lower() in {"", ".md", ".mdx", ".rst", ".txt", ".adoc"}:
             categories.add("documentation")
     if (
@@ -163,6 +171,31 @@ def classify(path: Path) -> set[str]:
         "config.example.yaml",
     }:
         categories.add("configuration_example")
+    if (
+        parts & TEST_DIRS
+        or lower.startswith(("test_", "spec_"))
+        or lower.endswith(("_test.py", "_test.go", ".test.ts", ".test.tsx", ".spec.ts", ".spec.tsx", ".spec.js", ".spec.rb"))
+    ):
+        categories.add("tests_and_quality")
+    if parts & MIGRATION_DIRS or lower.startswith(("schema.", "migration.")):
+        categories.add("data_schema_and_migrations")
+    if (
+        ".github" in parts and "workflows" in parts
+        or lower in {".gitlab-ci.yml", "jenkinsfile", "buildkite.yml", "azure-pipelines.yml", "circle.yml"}
+        or ".circleci" in parts
+    ):
+        categories.add("ci_and_automation")
+    if lower in {"codeowners", "owners", "maintainers", "maintainers.md"} or "ownership" in lower:
+        categories.add("ownership")
+    if parts & OBSERVABILITY_TERMS or any(term in lower for term in OBSERVABILITY_TERMS):
+        categories.add("observability")
+    if any(
+        token in lower
+        for token in ("route", "router", "handler", "controller", "consumer", "subscriber", "listener", "worker", "scheduler", "cron", "job")
+    ):
+        categories.add("route_event_and_job_hints")
+    if lower in {".envrc", "devcontainer.json", "docker-compose.yml", "docker-compose.yaml", "compose.yml", "compose.yaml"} or ".devcontainer" in parts:
+        categories.add("local_development")
     return categories
 
 
@@ -243,7 +276,9 @@ def to_markdown(result: dict[str, object]) -> str:
     lines = [
         "# Project inventory",
         "",
-        f"- Root: `{result['root']}`",
+        f"- Repository root: `{result.get('repository_root', result['root'])}`",
+        f"- Scanned root: `{result['root']}`",
+        f"- Focus path: `{result.get('focus_path') or '.'}`",
         f"- Files scanned: {result['scanned_files']}",
         f"- Maximum depth: {result['max_depth']}",
         f"- Truncated at file limit: {'yes' if result['truncated'] else 'no'}",
@@ -275,6 +310,13 @@ def to_markdown(result: dict[str, object]) -> str:
         "deployment_and_infrastructure": "Deployment and infrastructure",
         "entrypoint_hint": "Entrypoint hints",
         "configuration_example": "Configuration examples",
+        "local_development": "Local development hints",
+        "tests_and_quality": "Tests and quality",
+        "data_schema_and_migrations": "Data schemas and migrations",
+        "route_event_and_job_hints": "Route, event, and job hints",
+        "ci_and_automation": "CI and automation",
+        "ownership": "Ownership hints",
+        "observability": "Observability hints",
     }
     for key, heading in headings.items():
         lines.extend(["", f"## {heading}", "", markdown_list(categories.get(key, []))])
@@ -301,7 +343,23 @@ def main() -> int:
     if not root.is_dir():
         raise SystemExit(f"Repository root is not a directory: {root}")
 
-    result = scan(root, args.max_depth, args.max_files)
+    scan_root = root
+    focus_path = None
+    if args.focus_path:
+        requested = Path(args.focus_path)
+        if requested.is_absolute():
+            raise SystemExit("--focus-path must be repository-relative")
+        scan_root = (root / requested).resolve()
+        try:
+            focus_path = scan_root.relative_to(root).as_posix()
+        except ValueError as exc:
+            raise SystemExit("--focus-path must stay inside the repository root") from exc
+        if not scan_root.is_dir():
+            raise SystemExit(f"Focus path is not a directory: {scan_root}")
+
+    result = scan(scan_root, args.max_depth, args.max_files)
+    result["repository_root"] = str(root)
+    result["focus_path"] = focus_path
     if args.format == "json":
         print(json.dumps(result, ensure_ascii=False, indent=2))
     else:

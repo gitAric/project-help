@@ -1,152 +1,187 @@
-# Diagram Patterns
+# SVG Diagram Patterns
 
-Use these patterns as starting points. Replace placeholders with project terminology and omit diagrams that do not add explanatory value.
+Create diagrams as polished, standalone SVG artifacts. Use them to reduce cognitive load and clarify relationships, not to decorate a report. Split a crowded model into several purposeful views.
 
 ## Contents
 
-1. Diagram rules
-2. System context
-3. Focused component map
-4. Business capability map
-5. Feature sequence
-6. State lifecycle
+1. Diagram selection
+2. Visual system
+3. Composition rules
+4. Semantic rules
+5. Rendering workflow
+6. Flow specification
+7. Sequence specification
+8. Direct-SVG fallback
+9. Quality checklist
 
-## Diagram rules
+## Diagram selection
 
-- Quote Mermaid labels that contain spaces, punctuation, or parentheses.
-- Use stable domain names consistently across diagrams and report tables.
-- Show direction on every integration and label the protocol, operation, topic, or data when known.
-- Keep infrastructure and business components visually distinct.
-- Use solid edges for confirmed relationships. Use dashed edges only for useful, explicitly labeled inferences.
-- Put evidence citations in prose immediately below a diagram; do not crowd source paths into nodes.
-- Add a legend when using focus or inferred styling.
-- Validate that Mermaid parses before delivery when a renderer is available.
+Choose the smallest set that answers the current learning goal:
 
-## System context
+| Question | Preferred diagram |
+|---|---|
+| Who uses the system and which external systems surround it? | System context |
+| What runs, stores data, and communicates? | Component/runtime map |
+| Where does a focused scope live? | Highlighted focused-scope map |
+| How does value move through business capabilities? | Capability or value-flow map |
+| What happens from trigger to observable outcome? | Sequence or process flow |
+| How does an entity or workflow change state? | State lifecycle |
+| Where does data originate, transform, and land? | Data lineage |
+| How is software deployed across environments? | Deployment topology |
 
-```mermaid
-flowchart LR
-    actor["Primary actor"]
-    upstream["Upstream system"]
-    system["Project system"]
-    downstream["Downstream system"]
+Use a system context plus one representative golden path for quick onboarding. Add more diagrams only when they teach a distinct idea.
 
-    actor -->|"business action"| system
-    upstream -->|"trigger / input"| system
-    system -->|"command / event / data"| downstream
+## Visual system
 
-    classDef actor fill:#E8F0FE,stroke:#2563EB,color:#172554
-    classDef system fill:#ECFDF5,stroke:#059669,color:#064E3B
-    classDef external fill:#F8FAFC,stroke:#64748B,color:#0F172A
-    class actor actor
-    class system system
-    class upstream,downstream external
+Use a restrained light theme with strong hierarchy:
+
+| Role | Treatment |
+|---|---|
+| Canvas | Cool off-white `#F7F9FC` |
+| Primary system | Blue tint and blue border |
+| Focused scope | Warm orange tint, thicker border, subtle shadow |
+| Data/store | Green tint |
+| External actor/system | Violet tint |
+| Neighboring context | White or neutral gray |
+| Risk/failure | Red only when the risk itself is the subject |
+| Confirmed edge | Solid slate line |
+| Inferred edge | Dashed muted line and explicit label |
+
+Use system fonts such as Inter, `ui-sans-serif`, or `system-ui`. Keep titles about 28–32 px, node titles 16–19 px, body labels 13–16 px, and never use text below 12 px. Maintain WCAG-friendly contrast.
+
+Use one accent color for focus. Do not assign arbitrary colors to every service. Color must communicate role, scope, or evidence status.
+
+## Composition rules
+
+- Use a descriptive title that states the diagram's teaching purpose.
+- Use a short subtitle to explain the boundary or highlighted scope.
+- Keep five to nine primary nodes in one view. Group related internals inside a labeled boundary.
+- Arrange the dominant flow left-to-right or top-to-bottom and keep it consistent.
+- Place edges behind nodes. Prefer orthogonal routes and avoid crossings.
+- Leave at least one label-width of space between connected nodes.
+- Keep labels short. Move detailed evidence, exceptions, and payload fields into prose or tables.
+- Align nodes to an 8 px grid with consistent sizes, padding, corner radii, and gaps.
+- Use whitespace to show boundaries and reading order; avoid large unexplained empty areas.
+- Highlight every node owned by a focused scope and mute surrounding context without making it unreadable.
+- Add a small legend only when styling carries meaning that is not obvious.
+- Split context, runtime, sequence, state, and deployment concerns instead of combining them into one oversized canvas.
+
+## Semantic rules
+
+- Draw an edge only when active wiring, a contract, a schema, a test, or authoritative documentation supports it.
+- Use arrow direction from trigger/producer/provider toward handler/consumer/side effect, and state the reference boundary in accompanying prose.
+- Label protocol, operation, topic, event, command, or data when known.
+- Use solid edges for confirmed relationships and dashed edges only for useful, labeled inferences.
+- Distinguish synchronous calls, asynchronous publication, data access, and human/manual action when that distinction matters.
+- Mark owned state separately from cached, replicated, or externally owned data.
+- For lifecycle diagrams, show only states and transitions confirmed by code, schema, or authoritative documents. Explain guards and irreversible transitions outside the graphic.
+- Put evidence citations directly below the SVG instead of inside nodes.
+
+## Rendering workflow
+
+Prefer the bundled renderer for consistent flow and sequence diagrams. It uses only the Python standard library.
+
+```bash
+python3 <skill-dir>/scripts/render_svg.py <diagram-spec.json> --output <diagram.svg>
+python3 <skill-dir>/scripts/validate_svg.py --strict <diagram.svg>
 ```
 
-Below the diagram, list the evidence for each edge and mark any inferred direction.
+In Claude Code, use `${CLAUDE_SKILL_DIR}` for `<skill-dir>`.
 
-## Focused component map
+The renderer supports two diagram types:
 
-Use this pattern whenever the user requests one feature or module. The orange nodes show exactly where the requested feature lives in the wider system.
+- `flow`: context, component, capability, state, lineage, and deployment views with explicit node geometry.
+- `sequence`: participants are spaced automatically and messages are rendered in order.
 
-```mermaid
-flowchart LR
-    user["User / caller"]
+Render an example to inspect the theme:
 
-    subgraph product["Product system"]
-        gateway["Gateway / UI"]
-        neighbor["Neighboring capability"]
-
-        subgraph domain["Owning business domain"]
-            entry["Feature entrypoint"]
-            logic["Feature application/domain logic"]
-            data[("Feature data")]
-        end
-    end
-
-    external["External downstream"]
-
-    user --> gateway
-    gateway -->|"operation"| entry
-    entry --> logic
-    logic --> data
-    logic -->|"side effect"| external
-    neighbor -.->|"inferred or optional"| logic
-
-    classDef focus fill:#FFF3E0,stroke:#E65100,stroke-width:3px,color:#7F2D00
-    classDef context fill:#F8FAFC,stroke:#94A3B8,color:#334155
-    classDef external fill:#EEF2FF,stroke:#6366F1,color:#312E81
-    class entry,logic,data focus
-    class gateway,neighbor context
-    class user,external external
+```bash
+python3 <skill-dir>/scripts/render_svg.py --example flow --output /tmp/project-help-flow.svg
+python3 <skill-dir>/scripts/render_svg.py --example sequence --output /tmp/project-help-sequence.svg
 ```
 
-Add a location statement after the diagram:
+Use a safe temporary or artifact directory unless the user explicitly requests repository files.
+Use `--display-scale 0.5` when a compact default display size is helpful; the full `viewBox` and vector quality are preserved.
 
-`Product system > Owning domain > Service/package > Feature module > Entrypoint`
+## Flow specification
 
-## Business capability map
+Create a JSON specification like:
 
-```mermaid
-flowchart TB
-    outcome["Business outcome"]
-
-    subgraph capabilities["Business capabilities"]
-        intake["Intake"]
-        decision["Decision / policy"]
-        fulfillment["Fulfillment"]
-        support["Support / reconciliation"]
-    end
-
-    outcome --> intake
-    intake --> decision
-    decision --> fulfillment
-    fulfillment --> support
+```json
+{
+  "type": "flow",
+  "title": "Checkout in system context",
+  "subtitle": "Focused scope highlighted; surrounding context muted",
+  "width": 1440,
+  "height": 900,
+  "groups": [
+    {"id": "commerce", "label": "Commerce domain", "x": 300, "y": 150, "width": 800, "height": 600}
+  ],
+  "nodes": [
+    {"id": "user", "label": "Customer", "kind": "actor", "tone": "external", "x": 60, "y": 350, "width": 190, "height": 118},
+    {"id": "checkout", "label": "Checkout", "subtitle": "Selected scope", "kind": "feature", "tone": "focus", "focus": true, "x": 430, "y": 340, "width": 220, "height": 132},
+    {"id": "orders", "label": "Order store", "kind": "data", "tone": "data", "x": 820, "y": 350, "width": 190, "height": 118}
+  ],
+  "edges": [
+    {"from": "user", "to": "checkout", "label": "Submit order", "style": "emphasis"},
+    {"from": "checkout", "to": "orders", "label": "Persist", "style": "confirmed"}
+  ]
+}
 ```
 
-Map each capability to implementing components in a table below the diagram. Do not derive capability boundaries solely from folders.
+Node tones: `primary`, `focus`, `data`, `external`, `neutral`, and `risk`. Edge styles: `confirmed`, `inferred`, `emphasis`, and `risk`.
 
-## Feature sequence
+The renderer chooses anchors and orthogonal paths automatically. Override with `from_side` and `to_side` (`left`, `right`, `top`, `bottom`) or provide explicit `points` when avoiding a crossing.
 
-```mermaid
-sequenceDiagram
-    autonumber
-    actor Caller
-    participant Entry as "UI / API / Event adapter"
-    participant App as "Application service"
-    participant Domain as "Domain logic"
-    participant Store as "Data store"
-    participant Downstream as "Downstream system"
+## Sequence specification
 
-    Caller->>Entry: Trigger with input
-    Entry->>Entry: Authenticate and validate
-    Entry->>App: Normalized command
-    App->>Domain: Apply business rule
-    Domain->>Store: Read or persist state
-    Store-->>Domain: Result
-    alt External side effect required
-        App->>Downstream: Command / event
-        Downstream-->>App: Result / acknowledgement
-    else No external side effect
-        App->>App: Complete locally
-    end
-    App-->>Entry: Outcome or domain error
-    Entry-->>Caller: Response / acknowledgement
+Create a JSON specification like:
+
+```json
+{
+  "type": "sequence",
+  "title": "Golden path: submit an order",
+  "subtitle": "Trigger to durable and observable outcomes",
+  "participants": [
+    {"id": "caller", "label": "Customer", "tone": "external"},
+    {"id": "api", "label": "Order API", "tone": "primary"},
+    {"id": "domain", "label": "Order domain", "tone": "focus"},
+    {"id": "store", "label": "Order store", "tone": "data"}
+  ],
+  "messages": [
+    {"from": "caller", "to": "api", "label": "Submit order", "style": "emphasis"},
+    {"from": "api", "to": "domain", "label": "Validate and create"},
+    {"from": "domain", "to": "store", "label": "Persist state"},
+    {"from": "store", "to": "domain", "label": "Commit result", "style": "response"}
+  ]
+}
 ```
 
-Replace generic steps with verified behavior. Include timeout, retry, transaction, or async boundaries only when supported by evidence.
+Keep sequence diagrams to eight or fewer participants. Split by phase when the interaction becomes wider or longer than a newcomer can scan easily.
 
-## State lifecycle
+## Direct-SVG fallback
 
-```mermaid
-stateDiagram-v2
-    [*] --> Draft
-    Draft --> Submitted: submit
-    Submitted --> Approved: approve
-    Submitted --> Rejected: reject
-    Approved --> Completed: fulfill
-    Rejected --> Draft: revise
-    Completed --> [*]
-```
+Author SVG directly when the helper cannot express the required layout. Keep it self-contained and portable:
 
-Use a state diagram only when state and transitions are explicit in code, schemas, or authoritative documentation. Note guards, side effects, and irreversible transitions in prose.
+- Set `xmlns`, `viewBox`, `width`, `height`, `role="img"`, and `aria-labelledby` on the root.
+- Include `<title>` and `<desc>`.
+- Embed CSS in `<style>` and arrowheads, gradients, or shadows in `<defs>`.
+- Use only vector primitives and text. Avoid external images, scripts, `foreignObject`, remote fonts, and external stylesheets.
+- Wrap long labels with `<tspan>` and preserve minimum font sizes.
+- Reuse the visual tokens and semantic conventions in this guide.
+- Run `validate_svg.py` after every revision.
+
+## Quality checklist
+
+Before delivery, confirm:
+
+- The title, scope, reading direction, and main takeaway are apparent within a few seconds.
+- No nodes, labels, arrows, or shadows are clipped.
+- No labels overlap edges or nodes, and no important edge crosses another edge.
+- Focus styling is visible but restrained; context remains legible.
+- Solid and dashed edges match the evidence ledger.
+- Text is readable at normal display size and contrast is sufficient.
+- The SVG opens without network access and contains no external dependencies.
+- `validate_svg.py --strict` passes.
+- A rendered visual inspection has been performed when the environment supports it.
+- Diagram names, directions, and claims match the report and evidence below it.

@@ -1,11 +1,11 @@
 ---
 name: project-help
-description: Rapidly understand an unfamiliar, large software project through evidence-backed architecture, business-capability, feature, interface, dependency, and implementation analysis. Use when taking over a codebase, preparing project onboarding or handover documentation, mapping system and business architecture, cataloging features and APIs, tracing upstream/downstream systems or data flows, explaining detailed interface logic, or deeply analyzing one specified feature while locating and highlighting it within the wider architecture.
+description: Rapidly onboard newcomers to unfamiliar software projects or orient them to one bounded area through evidence-backed system, business, code, runtime, developer-workflow, ownership, and change-impact analysis. Use when taking over a codebase; learning a whole repository; understanding one domain, service, package, module, feature, API, event, job, data entity, workflow, or directory; preparing handover material; tracing upstream/downstream behavior; finding where and how to make a safe change; or producing clear, polished SVG architecture and flow diagrams.
 ---
 
 # Project Help
 
-Build a layered mental model of an unfamiliar project, from system context down to code branches. Keep every important claim traceable to repository evidence and keep inferred business meaning visibly separate from confirmed implementation facts.
+Build a useful mental model of an unfamiliar project from purpose and vocabulary down to executable paths and code branches. Optimize for a newcomer becoming productive, not for producing the largest possible report. Keep important claims traceable to repository evidence and keep inferred business meaning separate from confirmed implementation facts.
 
 ## Resolve bundled resources portably
 
@@ -21,35 +21,77 @@ Use this skill unchanged in Codex and Claude Code:
 - Read and obey repository instructions such as `AGENTS.md` before inspecting broadly.
 - Inspect statically first. Do not install dependencies, start infrastructure, run migrations, call production services, or execute unfamiliar project scripts without authorization.
 - Never expose secret values. Mention configuration key names and their roles only.
-- Cite important claims with the narrowest useful evidence: file and line, symbol, route registration, schema, configuration, test, or project document.
-- Label claims as **Confirmed**, **Inferred**, **Unknown**, or **Conflict**. Never turn naming conventions or comments into confirmed runtime behavior without checking wiring.
+- Cite important claims with the narrowest useful evidence: file and line, symbol, active registration, schema, configuration, test, or authoritative project document.
+- Label claims as **Confirmed**, **Inferred**, **Unknown**, or **Conflict**. Never turn naming, comments, folder structure, or recent authorship into confirmed runtime behavior or ownership without checking wiring or authoritative evidence.
 - Distinguish implemented behavior from intended business behavior. Code proves implementation; product documents, specifications, and domain owners may be needed to prove intent.
-- Prefer targeted discovery with `rg`, manifests, route tables, dependency injection, schemas, and entrypoints over reading files sequentially.
-- Keep the user updated during long repository investigations and deliver useful partial maps before exhaustive detail.
+- Prefer targeted discovery with `rg`, manifests, registration points, schemas, tests, and entrypoints over reading files sequentially.
+- Keep the user updated during long investigations and deliver useful partial maps before exhaustive detail.
+- Protect the newcomer from overload. Explain unfamiliar terms on first use, summarize before drilling down, and omit detail that does not advance the requested learning goal.
 
-## Select the analysis mode
+## Configure the learning mission
 
-Choose one mode from the request. State the chosen scope and any assumptions before presenting findings.
+Derive four dimensions from the request and state them in a compact mission card. Make a reasonable labeled assumption when a dimension is omitted.
 
-### Full-project onboarding
+### Scope
 
-Map the whole project in progressively deeper layers:
+- **Whole project**: repository, workspace, product, or system.
+- **Focused scope**: business domain, service, application, package, module, feature, API, route, event, queue, scheduled job, CLI, data entity, workflow, directory, or named change area.
 
-1. System context and repository boundaries
-2. Deployable services, applications, packages, and shared infrastructure
-3. Business domains, capabilities, actors, and major workflows
-4. User-facing and machine-facing features
-5. Interfaces, data stores, events, jobs, and upstream/downstream dependencies
-6. Representative critical paths and implementation details
-7. Risks, unknowns, and an efficient reading route for the new maintainer
+Do not treat every focused request as a feature. Preserve the user's actual boundary. For a focused scope, build only the minimum wider-system context needed to locate and explain it.
 
-For a very large project, prioritize breadth and representative critical paths first. Mark areas not yet sampled rather than implying complete coverage.
+### Depth
 
-### Focused-feature deep dive
+- **Quick orientation**: purpose, vocabulary, location, major components, one golden path, developer entrypoints, and a short reading route.
+- **Working knowledge**: important variants, data, interfaces, permissions, tests, operations, and common change points.
+- **Implementation deep dive**: decision branches, invariants, transactions, concurrency, errors, retries, generated or dynamic behavior, and change-impact boundaries.
 
-Analyze only the requested feature deeply, but first create or reuse a minimal whole-system context map. Locate the feature on that map and visually highlight it. Then trace its entrypoints, owners, call paths, data, integrations, state changes, errors, permissions, and tests.
+Default to quick orientation for an open-ended newcomer request and working knowledge for a named scope. Use deep-dive detail only when requested or needed to answer the stated goal.
 
-If the feature name maps to several materially different flows, show the candidates and ask the user only when choosing one would change the result substantially. Otherwise make a scoped assumption and label it.
+### Audience
+
+Adapt emphasis for backend, frontend, mobile, data, QA, SRE/platform, security, product/business, or mixed audiences. If no role is given, use a general software-maintainer lens.
+
+### Goal
+
+Classify the desired outcome as one or more of:
+
+- orient and learn;
+- prepare to modify or extend;
+- debug or explain observed behavior;
+- operate or support;
+- review architecture, risk, or ownership;
+- prepare onboarding or handover material.
+
+Read [onboarding-playbook.md](references/onboarding-playbook.md) when tailoring depth, role, a focused boundary, a learning path, or a hands-on onboarding plan.
+
+## Select the exploration shape
+
+### Whole-project onboarding
+
+Move from breadth to representative depth:
+
+1. Purpose, actors, outcomes, vocabulary, and repository boundaries
+2. Deployable applications, services, packages, shared infrastructure, and external systems
+3. Business domains, capabilities, core entities, and major workflows
+4. Runtime topology, data ownership, interfaces, events, jobs, and trust boundaries
+5. Developer workflow: configure, build, run, test, debug, migrate, generate, and observe
+6. One or more representative golden paths from trigger to observable outcome
+7. Ownership evidence, evolution signals, active versus legacy areas, and operational risks
+8. Safe-change map, recommended reading route, and practical newcomer exercises
+
+For a large project, deliver a quick orientation first. Sample representative critical paths and mark unsampled areas rather than implying complete coverage.
+
+### Focused-scope orientation or deep dive
+
+Start with a scope boundary card that names what is included, excluded, assumed, and adjacent. Locate the scope on a minimal whole-system map, then analyze only the requested depth.
+
+At quick depth, explain purpose, location, responsibilities, neighbors, entry surfaces, core vocabulary, and what to read first. At working or deep depth, trace call paths, data, state, integrations, errors, permissions, tests, observability, and change impact.
+
+If the scope name maps to materially different candidates, show the candidates and ask only when choosing one would substantially change the result. Otherwise choose the best-supported interpretation and label it.
+
+### Task-led or incident-led orientation
+
+When the request starts from a proposed change, bug, alert, user action, or question such as “where would I change X?” or “why does Y happen?”, trace outward only as far as needed to build the required context. Return the entrypoint, current behavior, owned state, upstream and downstream effects, likely modification boundary, regression surface, and verification route.
 
 ## Execute the discovery workflow
 
@@ -57,176 +99,140 @@ If the feature name maps to several materially different flows, show the candida
 
 Identify:
 
-- Repository root, monorepo/workspace boundaries, submodules, and generated or vendored areas
-- User-requested depth, named feature, audience, and desired output format
-- Available architecture records, product documents, API specifications, runbooks, issue links, tests, and deployment configuration
-- Branch or revision being inspected when that matters
+- Repository root, monorepo/workspace boundaries, submodules, generated or vendored areas, and the inspected revision
+- Scope, depth, audience, goal, desired output, and any time or file budget
+- Architecture records, product documents, API specifications, runbooks, issue links, tests, deployment configuration, and local-development guidance
+- Evidence gaps that may require runtime observation or a domain-owner answer
 
 Use the inventory helper when it saves time:
-
-In Codex, run:
 
 ```bash
 python3 <resolved-skill-directory>/scripts/project_inventory.py <repository-root> --max-depth 5
 ```
 
-In Claude Code, run:
+For a bounded directory, add `--focus-path <repository-relative-path>`. In Claude Code, replace `<resolved-skill-directory>` with `${CLAUDE_SKILL_DIR}`.
 
-```bash
-python3 "${CLAUDE_SKILL_DIR}/scripts/project_inventory.py" <repository-root> --max-depth 5
-```
+Treat helper output as navigation hints, not conclusions. Read [report-templates.md](references/report-templates.md) before composing a report.
 
-Treat the helper output as navigation hints, not conclusions. Read [report-templates.md](references/report-templates.md) before composing a final report.
+### 2. Build a newcomer-first mental model
 
-### 2. Build the structural map
+Answer these questions before exposing implementation detail:
+
+- What problem does the system or selected scope solve, for whom, and with what observable outcome?
+- Which domain terms, acronyms, entities, and status values must be understood first?
+- What are the few major building blocks, and why are their boundaries meaningful?
+- What is the representative trigger-to-outcome path?
+- Where should a newcomer start reading, running, testing, and asking questions?
+
+Create a small glossary. Distinguish domain language from framework terminology and repository-specific names. Call out misleading names, overloaded terms, and code-versus-documentation conflicts.
+
+### 3. Build the structural and runtime map
 
 Inspect high-signal files first:
 
-- Root documentation and repository instructions
-- Workspace, package, dependency, build, and task-runner manifests
-- Application entrypoints, route registration, dependency injection, plugin registration, and configuration loading
+- Root documentation, repository instructions, workspace and dependency manifests
+- Application entrypoints, route or event registration, dependency injection, plugin registration, and configuration loading
 - Deployment, container, orchestration, infrastructure-as-code, and environment examples
-- Database migrations, schemas, event definitions, API contracts, and generated-client boundaries
-- Tests that demonstrate intended integration or business behavior
+- Database migrations, schemas, event definitions, API contracts, generated-client boundaries, and feature flags
+- Tests demonstrating integration or business behavior
 
-Identify each first-party component's responsibility, runtime form, owner boundary if evidenced, dependencies, data stores, and externally visible interfaces. Exclude generated and third-party code from architecture ownership while recording where it forms an integration boundary.
+For each first-party component, identify responsibility, runtime form, boundary, dependencies, data ownership, trust boundary, and externally visible interfaces. Verify that an apparent module is wired into a live entrypoint before calling it active. Separate current, legacy, experimental, example, generated, and test-only paths.
 
-Verify that an apparent module is actually wired into a live entrypoint before calling it active. Note dead, experimental, legacy, or unreachable paths when evidence supports that distinction.
+### 4. Reconstruct business architecture and golden paths
 
-### 3. Reconstruct the business architecture
+Start from actors and outcomes rather than folders. Map capabilities, policies, approvals, core entities and lifecycles, happy paths, alternate paths, failure and compensation paths, and manual intervention.
 
-Start from actors and business outcomes, not folders. Map:
+Connect each capability to its UI, service, module, data, integration, and tests. When only code is available, describe business meaning as inferred and cite the evidence.
 
-- Actors or personas
-- Business domains and capabilities
-- Core entities and their lifecycle
-- Trigger-to-outcome workflows
-- Policies, permissions, approvals, and business rules
-- Failure, compensation, and manual-intervention paths
+### 5. Reconstruct the developer workflow
 
-Connect each capability to the implementing UI, service, module, data store, and integration. When only code is available, describe the behavior as an inferred capability and explain the evidence behind the inference.
+Find the documented or configured path to:
 
-### 4. Catalog features
+- bootstrap dependencies and configuration;
+- build and start relevant components;
+- seed, migrate, or generate data and code;
+- run unit, integration, contract, and end-to-end tests;
+- debug locally and inspect logs, metrics, traces, and audit records;
+- use fixtures, mocks, emulators, or local dependencies.
 
-For each major feature, record:
+Label commands as **Documented**, **Configured**, or **Runtime-verified**. Do not claim a command works merely because it exists, and do not execute it without authorization when it may mutate state or start infrastructure.
 
-- Actor and business goal
-- Entry surface: UI route, API, event, scheduled job, CLI, import, or internal call
-- Owning domain and component
-- Happy path and important alternate paths
-- Data read and written
-- External side effects and downstream consumers
-- Authentication, authorization, tenancy, and feature flags
-- Tests or specifications that best explain the feature
+### 6. Catalog capabilities, features, and interfaces
 
-Group features by business capability rather than by source directory alone.
+For each relevant capability or feature, record actor and goal, entry surface, owner component, happy and alternate paths, data read and written, external effects, permissions, tenancy, flags, and explanatory tests.
 
-### 5. Map interfaces and dependencies
+For each relevant interface, trace provider, consumer, direction, protocol, operation or topic, schema source, authentication, validation, compatibility, idempotency, ordering, retry, timeout, rate limiting, transaction boundary, consistency, cache behavior, side effects, observability, and tests.
 
-Include all relevant interface types: HTTP, RPC, GraphQL, WebSocket, events and queues, scheduled jobs, webhooks, file exchange, database boundaries, storage, CLI, UI-to-backend calls, and public module contracts.
+Call a system **upstream** when it supplies a trigger or data to the analyzed boundary and **downstream** when it receives a command, data, or side effect. State the reference boundary explicitly.
 
-For each interface, trace:
+### 7. Trace detailed logic where needed
 
-- Provider, consumer, direction, protocol, operation or topic, and implementation entrypoint
-- Request or message shape, response or output shape, and schema source
-- Authentication, authorization, validation, defaults, and compatibility/version rules
-- Idempotency, ordering, retries, timeout, rate limiting, pagination, and deduplication
-- Transaction boundary, consistency model, cache behavior, side effects, and failure mapping
-- Observability hooks and tests
+Follow registration and runtime wiring from the external trigger to the durable or observable outcome:
 
-Call a system **upstream** when it supplies a trigger or data to the analyzed flow; call it **downstream** when it receives commands, data, or side effects from that flow. Describe the direction explicitly when a relationship is bidirectional.
+`route/event/job -> adapter -> application orchestration -> domain rule -> repository/integration -> response/event/state`
 
-### 6. Trace detailed logic
+Record input normalization, authentication and authorization, flags, decision branches, state transitions, invariants, persistence, transactions, locking, cache, sync and async boundaries, errors, retries, compensation, partial success, observability, and test coverage at the selected depth.
 
-Trace from the external trigger to the durable or observable outcome. Follow registration and runtime wiring, not filename similarity.
+Include exact symbols for non-obvious hops. Mark dynamic dispatch, reflection, generated code, runtime configuration, or unavailable dependencies that prevent confirmation.
 
-Record:
+### 8. Add ownership, evolution, and change-readiness
 
-1. Preconditions and input normalization
-2. Validation, authentication, authorization, tenancy, and flags
-3. Orchestration and important decision branches
-4. Domain state transitions and invariants
-5. Persistence, transaction, locking, cache, and consistency behavior
-6. Synchronous integrations and asynchronous publication
-7. Error translation, retry, compensation, rollback, and partial-success behavior
-8. Metrics, logs, traces, and audit records
-9. Unit, integration, contract, and end-to-end coverage
+Use CODEOWNERS, ownership documents, package metadata, and team records as primary ownership evidence. Use Git history only as a secondary signal for recently changed or stable areas; do not equate authorship with ownership.
 
-For focused analysis, provide a compact call chain such as:
+When useful, identify architectural decision records, compatibility constraints, migration paths, churn hotspots, legacy seams, and areas where tests or observability are weak.
 
-`route/event -> adapter -> application service -> domain rule -> repository/integration -> response/event`
+For a proposed change, produce a task-to-code map: likely entry files and symbols, invariants to preserve, contracts and consumers affected, migrations or generated artifacts involved, tests to run, telemetry to watch, and rollback or compatibility concerns. Keep this hypothetical unless the user asks for implementation.
 
-Include exact symbols and evidence for every non-obvious hop. Mark dynamic dispatch, reflection, generated code, runtime configuration, or missing dependencies that prevent full confirmation.
+### 9. Produce polished SVG diagrams
 
-### 7. Draw and validate the architecture
+Read [diagram-patterns.md](references/diagram-patterns.md) before drawing. When a diagram materially improves understanding, deliver a standalone `.svg` artifact rather than Mermaid source.
 
-Read [diagram-patterns.md](references/diagram-patterns.md) before drawing.
+- Use the smallest diagram set that answers the learning goal: context, component/runtime, capability/value flow, focused-scope map, sequence, state, data lineage, or deployment.
+- Prefer `scripts/render_svg.py` for flow and sequence diagrams so spacing, typography, arrows, colors, accessibility metadata, and legends stay consistent.
+- Author SVG directly only when the helper cannot express the required visual. Keep it self-contained, use a `viewBox`, embed styles, avoid external assets and `foreignObject`, and include `<title>` and `<desc>`.
+- Use solid edges for confirmed relationships and dashed edges only for useful, labeled inferences. Highlight the selected scope with one restrained accent color and mute surrounding context.
+- Keep labels short, place edges behind nodes, avoid crossings, split overloaded diagrams, and put evidence citations in prose below the graphic.
+- Validate every SVG with `scripts/validate_svg.py`. Render or visually inspect it when the environment supports image viewing, then fix clipping, overlap, weak contrast, tiny text, awkward whitespace, or unclear flow before delivery.
+- If the user did not request files in the repository, write SVGs to a safe temporary or artifact directory and attach or link them. Do not leave generated diagrams in the analyzed repository without permission.
 
-Use Mermaid unless the user requests another format. Produce the smallest set that explains the system:
-
-- System context diagram for actors and external systems
-- Container/component diagram for services, modules, stores, and integrations
-- Business flow or capability map
-- Sequence diagram for a critical or requested feature
-- State diagram only when lifecycle transitions are central
-
-For a focused feature:
-
-- Show enough surrounding context to establish its architectural location.
-- Apply the `focus` class to every node owned by the feature.
-- Keep neighboring components muted but readable.
-- Label inbound and outbound boundaries.
-- Add a short location statement such as `System > Domain > Service > Module > Entrypoint`.
-
-Do not add an edge merely because a dependency seems likely. Mark inferred edges in the prose and use a dashed line only when the inference is useful and labeled.
-
-### 8. Cross-check the model
+### 10. Cross-check and stage delivery
 
 Before delivering:
 
-- Confirm entrypoints through route, job, event, plugin, or dependency-injection registration.
-- Confirm interface shapes against schemas or serialization code, not controllers alone.
-- Confirm data writes, side effects, and transaction boundaries in implementations.
-- Check tests and configuration for alternate behavior, feature flags, and environment-specific wiring.
-- Reconcile diagrams, tables, and prose so component names and relationship directions match.
-- Ensure every architecture edge and major business claim has evidence or an uncertainty label.
-- Separate current paths from legacy, unused, generated, example, and test-only paths.
-- List material gaps and the exact artifact, runtime observation, or stakeholder answer needed to close each one.
+- Confirm active entrypoints, interface shapes, state writes, side effects, transaction boundaries, flags, and environment-specific wiring.
+- Reconcile diagrams, tables, call chains, terminology, and relationship directions.
+- Maintain a coverage ledger showing inspected, sampled, and uninspected areas.
+- State what the newcomer should now understand, what remains unknown, and the cheapest next learning step.
+- Deliver quick orientation before deeper appendices. Stop at the requested depth instead of expanding every available dimension.
 
-## Deliver layered output
+## Deliver role-appropriate output
 
-Answer inline by default. Create files in the project only when the user asks for persistent documentation.
+Answer inline by default. Create persistent onboarding files in the project only when requested. Use the matching structure from [report-templates.md](references/report-templates.md).
 
-For full-project onboarding, deliver:
+For a quick newcomer orientation, prioritize:
 
-1. Executive snapshot and scope
-2. System and component architecture diagrams
-3. Business capability and major workflow map
-4. Feature catalog
-5. Interface and upstream/downstream matrix
-6. One or more critical-path deep dives
-7. Data, runtime, security, and operational notes
-8. Risks, conflicts, unknowns, and coverage limits
-9. Evidence-backed recommended reading order
+1. Mission and one-minute summary
+2. Polished SVG context map
+3. Core vocabulary and building blocks
+4. One golden path
+5. Developer start/test/debug path
+6. First reading route, common pitfalls, and next exercises
 
-For a focused feature, deliver:
+For full-project working knowledge, add business capabilities, interfaces, data, security, operations, ownership/evolution, feature catalog, critical paths, task-to-code map, coverage, risks, and evidence ledger.
 
-1. Feature location card and highlighted architecture map
-2. Business purpose, actors, trigger, and outcome
-3. Entrypoints and end-to-end call chain
-4. Sequence or state diagram where useful
-5. Interface, data, permissions, error, transaction, and side-effect details
-6. Tests, observability, risks, unknowns, and change-impact boundary
+For a focused scope, deliver the scope boundary and location first, then purpose, responsibilities, neighbors, entry surfaces, call or data flow, state, contracts, tests, operations, safe-change boundary, and next reading route at the selected depth.
 
-Use concise summaries first and expandable detail afterward. Use local clickable file links when supported; otherwise cite `path:line` and symbol. Keep an evidence ledger for complex reports.
+For task-led or incident-led work, lead with the answer and traced path, then supply only the architecture context required to justify it.
+
+When useful, include two or three short understanding checks or hands-on exercises that can be completed safely without production access. Do not turn the report into a quiz unless the user wants one.
 
 ## Handle incomplete evidence
 
 Use these labels consistently:
 
 - **Confirmed**: Directly supported by active wiring, implementation, schema, test, or authoritative project document.
-- **Inferred**: Best explanation of several clues, but runtime or business intent is not fully verified.
+- **Inferred**: Best explanation of several clues, but runtime behavior, ownership, or business intent is not fully verified.
 - **Unknown**: Required evidence is absent or inaccessible.
 - **Conflict**: Code, configuration, tests, or documentation disagree.
 
-For each important unknown, state why it matters and the cheapest next check. Never hide uncertainty behind a polished diagram.
+For each material unknown, state why it matters and the cheapest artifact, runtime observation, or stakeholder answer needed to close it. Never hide uncertainty behind a polished diagram.
