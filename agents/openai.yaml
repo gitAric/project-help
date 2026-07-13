@@ -1,0 +1,4 @@
+interface:
+  display_name: "Project Help 项目熟悉"
+  short_description: "快速梳理大型项目架构、业务功能、接口、上下游与局部逻辑"
+  default_prompt: "使用 $project-help 快速熟悉当前项目，输出总体架构、业务功能、接口与上下游关系，并用证据标注结论。"
