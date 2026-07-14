@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Render polished, self-contained SVG flow or sequence diagrams from JSON."""
+"""Render polished, self-contained SVG project diagrams from JSON or built-in examples."""
 
 from __future__ import annotations
 
@@ -462,6 +462,71 @@ def example_spec(kind: str) -> dict[str, Any]:
                 {"from": "api", "to": "user", "label": "201 Created", "style": "response"},
             ],
         }
+    if kind == "overall-architecture":
+        return {
+            "type": "flow",
+            "title": "Global overall architecture",
+            "subtitle": "Selected function: Checkout highlighted in the whole technical and operational context",
+            "width": 1600,
+            "height": 860,
+            "groups": [
+                {"id": "owned", "label": "Owned product and platform boundary", "x": 300, "y": 150, "width": 990, "height": 610},
+            ],
+            "nodes": [
+                {"id": "actors", "label": "Customers & operators", "subtitle": "Primary actors", "kind": "actors", "tone": "external", "x": 45, "y": 385, "width": 205, "height": 122},
+                {"id": "channels", "label": "Web, mobile & ops UI", "subtitle": "Access channels", "kind": "channels", "tone": "primary", "x": 350, "y": 245, "width": 235, "height": 122},
+                {"id": "edge", "label": "API & identity edge", "subtitle": "Routing and access", "kind": "edge", "tone": "neutral", "x": 350, "y": 545, "width": 235, "height": 122},
+                {"id": "core", "label": "Checkout & order services", "subtitle": "Selected function runtime", "kind": "focus", "tone": "focus", "focus": True, "x": 700, "y": 245, "width": 245, "height": 132},
+                {"id": "async", "label": "Events & job platform", "subtitle": "Async execution", "kind": "platform", "tone": "primary", "x": 700, "y": 545, "width": 245, "height": 122},
+                {"id": "data", "label": "Operational data stores", "subtitle": "Authoritative state", "kind": "data", "tone": "data", "x": 1045, "y": 395, "width": 220, "height": 122},
+                {"id": "partners", "label": "Payment & delivery partners", "subtitle": "External dependencies", "kind": "external", "tone": "external", "x": 1350, "y": 245, "width": 205, "height": 122},
+                {"id": "insights", "label": "Analytics & observability", "subtitle": "Insights and operations", "kind": "external", "tone": "neutral", "x": 1350, "y": 545, "width": 205, "height": 122},
+            ],
+            "edges": [
+                {"from": "actors", "to": "channels", "label": "Use product", "style": "emphasis"},
+                {"from": "channels", "to": "edge", "label": "HTTPS / API"},
+                {"from": "edge", "to": "core", "label": "Commands & queries", "points": [[585, 606], [640, 606], [640, 311], [700, 311]]},
+                {"from": "core", "to": "async", "label": "Events / jobs"},
+                {"from": "core", "to": "data", "label": "Own data", "points": [[945, 311], [995, 311], [995, 456], [1045, 456]]},
+                {"from": "async", "to": "data", "label": "Project data", "points": [[945, 606], [995, 606], [995, 496], [1045, 496]]},
+                {"from": "core", "to": "partners", "label": "Authorize / fulfill"},
+                {"from": "async", "to": "insights", "label": "Events / telemetry"},
+                {"from": "data", "to": "insights", "label": "Replicate", "points": [[1265, 496], [1310, 496], [1310, 606], [1350, 606]]},
+            ],
+        }
+    if kind == "business-architecture":
+        return {
+            "type": "flow",
+            "title": "Business architecture: checkout to outcome",
+            "subtitle": "Selected function: Checkout highlighted in its value stream and capability context",
+            "width": 1820,
+            "height": 940,
+            "groups": [
+                {"id": "value", "label": "Customer value stream", "x": 300, "y": 150, "width": 1220, "height": 390},
+                {"id": "support", "label": "Cross-cutting business capabilities", "x": 300, "y": 610, "width": 1220, "height": 220},
+            ],
+            "nodes": [
+                {"id": "actor", "label": "Customer", "subtitle": "Need or intent", "kind": "actor", "tone": "external", "x": 35, "y": 285, "width": 180, "height": 122},
+                {"id": "discover", "label": "Discover & select", "subtitle": "Offer · Cart", "kind": "capability", "tone": "primary", "x": 340, "y": 265, "width": 195, "height": 122},
+                {"id": "commit", "label": "Commit order", "subtitle": "Checkout · Order · Payment", "kind": "capability", "tone": "focus", "focus": True, "x": 650, "y": 265, "width": 195, "height": 122},
+                {"id": "fulfill", "label": "Fulfill promise", "subtitle": "Inventory · Shipment", "kind": "capability", "tone": "primary", "x": 960, "y": 265, "width": 195, "height": 122},
+                {"id": "serve", "label": "Serve & retain", "subtitle": "Case · Refund", "kind": "capability", "tone": "primary", "x": 1270, "y": 265, "width": 195, "height": 122},
+                {"id": "outcome", "label": "Outcome", "subtitle": "Value received · Trust", "kind": "result", "tone": "data", "x": 1580, "y": 285, "width": 205, "height": 122},
+                {"id": "identity", "label": "Identity & relationship", "subtitle": "Eligibility · Preferences", "kind": "enabler", "tone": "neutral", "x": 400, "y": 665, "width": 225, "height": 122},
+                {"id": "policy", "label": "Risk, policy & approval", "subtitle": "Controls · Decisions", "kind": "enabler", "tone": "external", "x": 785, "y": 665, "width": 225, "height": 122},
+                {"id": "insight", "label": "Data & business insight", "subtitle": "Measure · Learn · Adapt", "kind": "enabler", "tone": "data", "x": 1170, "y": 665, "width": 225, "height": 122},
+            ],
+            "edges": [
+                {"from": "actor", "to": "discover", "label": "Need", "style": "emphasis"},
+                {"from": "discover", "to": "commit", "label": "Select", "style": "emphasis"},
+                {"from": "commit", "to": "fulfill", "label": "Promise", "style": "emphasis"},
+                {"from": "fulfill", "to": "serve", "label": "Deliver", "style": "emphasis"},
+                {"from": "serve", "to": "outcome", "label": "Outcome", "style": "emphasis"},
+                {"from": "identity", "to": "commit", "label": "Eligibility", "points": [[512, 665], [512, 575], [748, 575], [748, 387]]},
+                {"from": "policy", "to": "fulfill", "label": "Policy & controls", "points": [[898, 665], [898, 575], [1058, 575], [1058, 387]]},
+                {"from": "insight", "to": "serve", "label": "Feedback & measures", "points": [[1282, 665], [1282, 575], [1368, 575], [1368, 387]]},
+            ],
+        }
     return {
         "type": "flow",
         "title": "Focused scope in system context",
@@ -494,7 +559,11 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("spec", nargs="?", help="JSON diagram specification")
     parser.add_argument("--output", required=True, help="Destination .svg file")
-    parser.add_argument("--example", choices=("flow", "sequence"), help="Render a built-in example instead of a JSON file")
+    parser.add_argument(
+        "--example",
+        choices=("flow", "sequence", "overall-architecture", "business-architecture"),
+        help="Render a built-in example instead of a JSON file",
+    )
     parser.add_argument("--display-scale", type=float, help="Scale the SVG's default display size while preserving its viewBox")
     return parser.parse_args()
 

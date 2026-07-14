@@ -1,6 +1,6 @@
-# Newcomer Onboarding Playbook
+# Project Takeover and Focused-Function Playbook
 
-Use this playbook to tailor project exploration to a newcomer's scope, depth, role, and practical goal. Keep the output progressive: orient first, connect concepts second, and expose implementation detail only when it helps the next task.
+Use this playbook to tailor a complete project takeover or one focused-function deep dive to the recipient's scope, depth, role, and practical goal. Keep the output progressive: establish the whole-project technical and business maps first, then expose the implementation detail required by the selected mode.
 
 ## Contents
 
@@ -19,7 +19,7 @@ Classify a request across four dimensions:
 | Dimension | Values | Default |
 |---|---|---|
 | Scope | Whole project; domain; service; app; package; module; feature; API; event; job; entity; workflow; directory; change area | Whole project unless a bounded target is named |
-| Depth | Quick orientation; working knowledge; implementation deep dive | Quick for open-ended onboarding; working for named scope |
+| Depth | Quick orientation; working knowledge; implementation deep dive | Working knowledge for whole-project takeover; implementation deep dive for named scope |
 | Audience | General maintainer; backend; frontend/mobile; data; QA; SRE/platform; security; product/business | General maintainer |
 | Goal | Learn; modify; debug; operate; review; hand over | Learn |
 
@@ -39,6 +39,8 @@ Establish:
 - the selected scope's location;
 - the first files and symbols worth reading.
 
+For every mission, turn these landmarks into a global overall architecture SVG covering actors and channels, owned boundaries, major runtimes, shared platform, data stores, external systems, and principal relationships. Highlight the target when the mission is focused.
+
 ### Stage 2: Language and business model
 
 Explain:
@@ -48,21 +50,29 @@ Explain:
 - major capabilities, policies, approvals, and business rules;
 - the difference between intended behavior and confirmed implementation.
 
+For every mission, turn this model into a separate business architecture SVG covering actors and outcomes, value streams, domains and capabilities, core entities, policies, approvals, and material manual work. Highlight the target's capability, value-stage, or supporting-enabler position when the mission is focused. Do not use the technical architecture as a substitute.
+
 ### Stage 3: Golden paths
 
-Trace representative trigger-to-outcome flows. Prefer one path learned well over many shallow paths. Add alternate, failure, compensation, and manual-intervention paths only at the requested depth.
+Trace every distinct critical trigger-to-outcome flow required by the selected mode. Use a separate SVG sequence or process view for each important path or phase, and add alternate, failure, compensation, and manual-intervention diagrams when evidence supports them. Prefer several clear diagrams over one shallow or overloaded flow.
 
 ### Stage 4: Runtime and data
 
 Connect services, processes, stores, caches, events, jobs, external systems, trust boundaries, configuration, and deployment environments. Explain data ownership and consistency in practical terms.
 
+Turn distinct runtime and data questions into separate component, deployment, interface, event/job, entity, ownership, lineage, state, and trust-boundary SVGs instead of relying only on prose.
+
 ### Stage 5: Developer loop
 
 Show how a newcomer can configure, build, run, test, debug, migrate, generate, and observe the relevant area. Distinguish documented, configured, and runtime-verified commands.
 
+Visualize the development and delivery loop, test layers, environment transitions, or observability signal path whenever they contain multiple dependent steps.
+
 ### Stage 6: Safe change readiness
 
 Map common tasks to entrypoints, invariants, contracts, data changes, generated artifacts, tests, telemetry, and compatibility or rollback concerns.
+
+Produce change-impact, verification, migration, rollout, or rollback SVGs for important change classes rather than leaving the relationships only in a checklist.
 
 ### Stage 7: Independent navigation
 
@@ -70,10 +80,12 @@ Provide a reading route, search anchors, likely domain-owner evidence, safe exer
 
 ## Capability model
 
-Select capabilities that advance the current goal; do not emit every section mechanically.
+Cover every capability category for a whole-project takeover. For a focused-function deep dive, select only the detail that advances the target while retaining both mandatory project-wide baseline maps.
 
 ### System comprehension
 
+- Global overall architecture: actors, channels, system/runtime boundaries, platform, data, external systems, and main relationships
+- Business architecture: outcomes, value streams, domains, capabilities, entities, policies, and manual work
 - System context and repository boundaries
 - Component and runtime topology
 - Business capability and value-flow map
@@ -112,6 +124,15 @@ Select capabilities that advance the current goal; do not emit every section mec
 - Safe hands-on exercises and understanding checks
 - Coverage ledger and a reusable continuation map
 
+### Diagram-rich communication
+
+- Treat the mandatory global overall and business architecture SVGs as the beginning of the visual explanation.
+- Add as many distinct, evidence-backed SVG views as help the recipient navigate the project; do not use a fixed diagram quota.
+- Use separate views for repository shape, business capabilities, runtime, data, interfaces, workflows, state, deployment, security, delivery, observability, ownership, and change impact when relevant.
+- Invent a project-specific diagram when established types do not express an important relationship.
+- Provide a diagram index and visual reading order for large portfolios.
+- Split dense diagrams and reject redundant or decorative images, not useful additional views.
+
 ## Audience lenses
 
 Use the audience lens to reorder emphasis, not to hide cross-cutting facts that materially affect the scope.
@@ -145,7 +166,9 @@ Assumptions:
 
 Apply these boundaries:
 
-- Show one level above the target to establish location and only the neighboring components that exchange data, control, or side effects with it.
+- Always include the global overall architecture with the target's technical position highlighted.
+- Always include the business architecture with the target's value-stream, capability, or supporting-enabler position highlighted.
+- After those two global locators, show one implementation level above the target and only the neighboring components that exchange data, control, or side effects with it.
 - Do not catalog unrelated features or interfaces.
 - Follow a dependency outside the boundary only when it affects behavior, reliability, security, data, or change impact.
 - Record out-of-scope discoveries in a short parking-lot list rather than expanding the report.
@@ -203,10 +226,13 @@ Update incrementally instead of rescanning the whole repository after every foll
 A newcomer-oriented result is complete at the selected depth when the user can answer:
 
 1. What does this system or scope do, and for whom?
-2. Where does it live, and what does it depend on?
-3. What are its core concepts, state, and representative flow?
-4. How is it built, tested, debugged, and observed?
-5. Where would a common change begin, what could it affect, and how would it be verified?
-6. Which claims are confirmed, which are inferred, and what remains unexplored?
+2. What is the global technical and operational shape, and how do the major parts connect?
+3. What value streams and business capabilities produce the important outcomes?
+4. Where does the selected scope live, and what does it depend on?
+5. What are its core concepts, state, and representative flow?
+6. How is it built, tested, debugged, and observed?
+7. Where would a common change begin, what could it affect, and how would it be verified?
+8. Which claims are confirmed, which are inferred, and what remains unexplored?
+9. Which diagram should they consult for project structure, business, runtime, data, behavior, operations, and change impact?
 
 Do not require implementation-level detail to satisfy a quick-orientation mission.

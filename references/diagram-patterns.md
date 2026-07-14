@@ -5,31 +5,100 @@ Create diagrams as polished, standalone SVG artifacts. Use them to reduce cognit
 ## Contents
 
 1. Diagram selection
-2. Visual system
-3. Composition rules
-4. Semantic rules
-5. Rendering workflow
-6. Flow specification
-7. Sequence specification
-8. Direct-SVG fallback
-9. Quality checklist
+2. Diagram-rich portfolio
+3. Global overall architecture
+4. Business architecture
+5. Visual system
+6. Composition rules
+7. Semantic rules
+8. Rendering workflow
+9. Flow specification
+10. Sequence specification
+11. Direct-SVG fallback
+12. Quality checklist
 
 ## Diagram selection
 
-Choose the smallest set that answers the current learning goal:
+Build a broad set of focused views that answers the current learning goal from multiple useful angles:
 
 | Question | Preferred diagram |
 |---|---|
+| What is the whole system's end-to-end technical and operational shape? | Global overall architecture |
+| How does the organization create value through this product or system? | Business architecture |
+| What content exists in the repository and how is it organized? | Repository/project structure map |
 | Who uses the system and which external systems surround it? | System context |
 | What runs, stores data, and communicates? | Component/runtime map |
 | Where does a focused scope live? | Highlighted focused-scope map |
 | How does value move through business capabilities? | Capability or value-flow map |
 | What happens from trigger to observable outcome? | Sequence or process flow |
 | How does an entity or workflow change state? | State lifecycle |
+| Which entities relate, and which boundary owns them? | Entity/data model |
 | Where does data originate, transform, and land? | Data lineage |
+| Which APIs, events, jobs, or packages depend on one another? | Interface or dependency map |
+| How do events, queues, workers, and schedules coordinate? | Event/job topology |
 | How is software deployed across environments? | Deployment topology |
+| Where are trust, permission, tenancy, and sensitive-data boundaries? | Security/trust-boundary map |
+| How do build, test, release, debug, and observe steps connect? | Developer workflow or delivery pipeline |
+| Who owns which areas, and where is the system evolving? | Ownership/evolution map |
+| What will a change affect, how is it verified, and how can it roll back? | Change-impact/verification map |
+| How does the system fail, recover, compensate, or require intervention? | Failure/recovery map |
 
-Use a system context plus one representative golden path for quick onboarding. Add more diagrams only when they teach a distinct idea.
+For every `project-help` analysis, use a global overall architecture plus a separate business architecture as the mandatory baseline. Continue with separate diagrams for each evidence-backed perspective or critical path that teaches a distinct idea. Never collapse the global technical view and business view into one overloaded canvas.
+
+## Diagram-rich portfolio
+
+Prefer visual explanation throughout the report. The selection table is a starting point, not a closed catalog. There is no fixed maximum diagram count: continue while each new SVG answers a different question or makes a relationship materially easier to understand.
+
+For whole-project takeover, seek useful views across these families:
+
+- **Project shape**: repository/content tree, workspace/package dependencies, generated or legacy boundaries, active versus inactive areas.
+- **Business**: ecosystem, stakeholder outcomes, domains, capability decomposition, value streams, policies, manual steps, core-entity lifecycles, business-to-code mapping.
+- **Runtime**: system context, components, processes, deployment, environment differences, sync/async topology, external dependencies.
+- **Data and contracts**: entity relationships, ownership, read/write paths, lineage, APIs, events, jobs, compatibility and consistency boundaries.
+- **Behavior**: critical workflows, call sequences, decisions, state machines, alternate paths, failures, retries, compensation and recovery.
+- **Delivery and operations**: configure/build/run/test/debug flow, CI/CD, observability signal flow, incident handling, rollout and rollback.
+- **People and change**: ownership, architectural evolution, migration seams, task-to-code impact, regression surface and verification route.
+
+For focused-function deep dives, keep both project-wide baselines and add separate target-level views for each relevant dimension. A typical portfolio may include target context, call sequence, state lifecycle, data ownership/lineage, interface or event dependencies, failure/retry flow, test and observability path, and change-impact map.
+
+Create project-specific diagram types when needed. A plugin graph, rules-decision tree, feature-flag matrix, cache-coherency view, tenancy map, migration timeline, or any other evidence-backed visual is valid even when it is absent from this guide.
+
+More diagrams must not mean denser diagrams. Keep one teaching purpose per SVG, split crowded phases or boundaries, and avoid duplicate views that merely restyle the same relationships. When the portfolio is large, provide a numbered diagram index and recommended visual reading order.
+
+## Global overall architecture
+
+Answer: “What are the major parts of the entire system, where do they run or store state, and how do they connect?” Build this view from the outside in:
+
+1. Actors and access channels
+2. Product, system, trust, and environment boundaries
+3. Major first-party applications, services, workers, and shared platform capabilities
+4. Authoritative data stores, caches, event infrastructure, and externally owned state
+5. External systems and the main synchronous, asynchronous, batch, and data relationships
+6. Deployment or runtime grouping when it changes how the system is understood or operated
+
+Keep the view global. Group lower-level modules inside five to nine meaningful nodes instead of drawing every repository package. Show direction and label protocols or events when known. Identify owned data and external dependencies visually. Verify active registration or deployment wiring before calling a component current.
+
+Recommended composition: actors and channels on the left, owned system boundaries in the center, data near its owner, and external systems on the right. Put shared platform or asynchronous infrastructure in a lower lane. Use nested group boxes for product, domain, runtime, environment, or trust boundaries, but avoid more than two visible nesting levels.
+
+For focused analysis, keep this as a whole-project view and highlight every node or boundary owned by the selected scope with the focus treatment. Mute unrelated internals, retain the upstream, downstream, data, and external relationships needed to establish position, and state the path from project boundary to target in prose below the SVG.
+
+## Business architecture
+
+Answer: “For whom does the business create which outcomes, through which capabilities and value flow?” Keep this view understandable without reading the source tree:
+
+1. Primary actors, customers, operators, and stakeholders
+2. Desired actor and business outcomes
+3. End-to-end value streams or major business journeys
+4. Business domains and capabilities that enable each value stage
+5. Core business entities and lifecycle handoffs
+6. Policies, approvals, risk controls, manual work, and external business parties when material
+7. A lightweight capability-to-system bridge in prose or a table, rather than replacing capabilities with services
+
+Use business language in node titles. Repository folders, controllers, databases, and service names belong in the global/component view unless they are also recognized business concepts. Arrange the main value stream left-to-right, place cross-cutting capabilities in a supporting lane, and use entity names in subtitles when they clarify what moves between stages.
+
+Do not infer business intent from naming alone. Product documents, specifications, tests, user-visible behavior, schemas, and domain-owner evidence may support the model; label code-only interpretations as inferred.
+
+For focused analysis, highlight the business capability or value-stream stage implemented by the target. If the target is technical infrastructure, show it in a supporting-enabler lane connected to the capabilities it serves. Do not force a direct customer outcome when evidence supports only an enabling role.
 
 ## Visual system
 
@@ -98,7 +167,11 @@ Render an example to inspect the theme:
 ```bash
 python3 <skill-dir>/scripts/render_svg.py --example flow --output /tmp/project-help-flow.svg
 python3 <skill-dir>/scripts/render_svg.py --example sequence --output /tmp/project-help-sequence.svg
+python3 <skill-dir>/scripts/render_svg.py --example overall-architecture --output /tmp/project-help-overall-architecture.svg
+python3 <skill-dir>/scripts/render_svg.py --example business-architecture --output /tmp/project-help-business-architecture.svg
 ```
+
+The two architecture examples deliberately highlight the same `Checkout` focus: once in the technical whole-system view and once in the business capability/value-stream view.
 
 Use a safe temporary or artifact directory unless the user explicitly requests repository files.
 Use `--display-scale 0.5` when a compact default display size is helpful; the full `viewBox` and vector quality are preserved.

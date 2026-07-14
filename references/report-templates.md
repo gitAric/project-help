@@ -1,12 +1,12 @@
 # Report Templates
 
-Select the smallest template that satisfies the learning mission. Keep the first screen useful to a newcomer and move evidence and implementation depth later.
+Use the template matching the learning mission, then enrich it with a diagram portfolio. Diagram placeholders are a floor, not a ceiling: add as many distinct SVG views as improve project understanding, including project-specific diagram types not named here. Keep the first screen useful to a newcomer and move evidence and implementation depth later.
 
 ## Contents
 
 1. Evidence notation
 2. Quick newcomer orientation
-3. Full-project working-knowledge report
+3. Whole-project takeover report
 4. Focused-scope report
 5. Task-led or incident-led report
 6. Reusable tables
@@ -44,18 +44,31 @@ Use clickable absolute local file links when the client supports them. Otherwise
 - Architectural shape:
 - Most important dependency or constraint:
 
-## 3. System or scope map
+## 3. Global overall architecture
 
-<Linked or embedded polished SVG artifact>
+<Required linked or embedded polished SVG artifact>
+
+Show the whole project's major technical and runtime shape. For a focused scope, keep the project whole visible and highlight the target's system, domain, runtime, data, and integration position.
 
 Main takeaway and evidence for each important edge:
 
-## 4. Vocabulary and building blocks
+## 4. Business architecture
+
+<Required linked or embedded polished SVG business-architecture artifact>
+
+Show actors, outcomes, value streams, business domains and capabilities, core entities, and material policies or manual work. For a focused scope, keep the wider business model visible and highlight the target's capability, value-stage, or supporting-enabler position.
+
+Additional diagram index and visual reading order:
+
+1. <Diagram title> — <question it answers>
+2. ...
+
+## 5. Vocabulary and building blocks
 
 | Term/component | Plain-language meaning | Why it matters | Evidence |
 |---|---|---|---|
 
-## 5. Representative golden path
+## 6. Representative golden path
 
 - Trigger:
 - Short call or data chain:
@@ -63,9 +76,9 @@ Main takeaway and evidence for each important edge:
 - Observable outcome:
 - Important failure boundary:
 
-<Optional polished SVG sequence or flow artifact>
+<One or more polished SVG sequence, process, decision, state, data, or failure-path artifacts>
 
-## 6. Developer starting point
+## 7. Developer starting point
 
 | Need | Command, file, or symbol | Status | Notes |
 |---|---|---|---|
@@ -74,12 +87,12 @@ Main takeaway and evidence for each important edge:
 | Test | | | |
 | Debug/observe | | | |
 
-## 7. Read next
+## 8. Read next
 
 1. <file or symbol> — <question it answers>
 2. ...
 
-## 8. Pitfalls, unknowns, and next exercise
+## 9. Pitfalls, unknowns, and next exercise
 
 - Misleading name or common misconception:
 - Material unknown:
@@ -87,10 +100,10 @@ Main takeaway and evidence for each important edge:
 - Safe hands-on exercise:
 ```
 
-## Full-project working-knowledge report
+## Whole-project takeover report
 
 ```markdown
-# Project onboarding: <project>
+# Project takeover: <project>
 
 ## 1. Executive snapshot and learning mission
 
@@ -100,32 +113,44 @@ Main takeaway and evidence for each important edge:
 - Architecture style and deployable units:
 - Critical dependencies and constraints:
 - Coverage and confidence:
+- Diagram index and recommended visual reading order:
 
 ## 2. Vocabulary and business model
 
 <Glossary and core-entity lifecycle>
 
-## 3. System context
+## 3. Global overall architecture
 
-<Polished SVG context diagram>
+<Required polished SVG global overall architecture diagram>
 
-Key relationships and evidence:
+Show actors and channels, owned system boundaries, major deployables and runtime services, shared platform, owned data, external systems, and major sync/async relationships. Summarize the main architectural shape, boundaries, and evidence below the diagram.
 
-## 4. Component and runtime architecture
+## 4. Business architecture and feature catalog
 
-<Polished SVG component/runtime diagram>
+<Required polished SVG business architecture diagram>
 
-| Component | Responsibility | Runtime/deployment | Owned data | Inbound | Outbound | Evidence |
-|---|---|---|---|---|---|---|
-
-## 5. Business architecture and feature catalog
-
-<Polished SVG capability or value-flow diagram>
+Show actors and outcomes, value streams, business domains and capabilities, core entities, material policies or approvals, manual work, and major external business parties.
 
 | Capability | Actor outcome | Feature/use case | Core entities | Implementing components | Confidence |
 |---|---|---|---|---|---|
 
-## 6. Golden paths
+## 5. Project contents and repository map
+
+<One or more SVG repository/content, workspace/package-dependency, and active/legacy-boundary diagrams>
+
+| Area/path | Kind | Responsibility | Runtime/business role | Lifecycle status | Evidence |
+|---|---|---|---|---|---|
+
+Account for every first-party top-level area. Mark vendored, generated, example, test-only, experimental, legacy, and inactive content explicitly.
+
+## 6. Component and runtime detail
+
+<One or more SVG component, runtime, deployment, environment, event/job, and external-dependency diagrams>
+
+| Component | Responsibility | Runtime/deployment | Owned data | Inbound | Outbound | Evidence |
+|---|---|---|---|---|---|---|
+
+## 7. Golden paths
 
 ### <critical path>
 
@@ -135,13 +160,17 @@ Key relationships and evidence:
 - Alternate and failure behavior:
 - Evidence:
 
-<Optional polished SVG sequence/state diagram>
+<A separate SVG process, sequence, decision, state, alternate-path, or failure/recovery view for each distinct critical path or phase>
 
-## 7. Interfaces and dependencies
+## 8. Interfaces and dependencies
+
+<SVG API/interface dependency, event topology, job topology, contract-compatibility, entity/data-model, ownership, and lineage diagrams as supported>
 
 <Interface matrix>
 
-## 8. Developer workflow
+## 9. Developer workflow
+
+<SVG configure/build/run/test/debug, CI/CD, environment-transition, and observability-signal diagrams as supported>
 
 - Configure and bootstrap:
 - Build and start:
@@ -150,29 +179,37 @@ Key relationships and evidence:
 - Debug, logs, metrics, traces, and audit:
 - Environment differences:
 
-## 9. Security, reliability, and operations
+## 10. Security, reliability, and operations
+
+<SVG trust-boundary, identity/permission, sensitive-data, failure/recovery, deployment, rollout, and rollback diagrams as supported>
 
 - Trust boundaries and sensitive data:
 - Authentication, authorization, and tenancy:
 - Consistency, cache, jobs, events, retries, and recovery:
 - Deployment, rollout, rollback, and manual intervention:
 
-## 10. Ownership and evolution
+## 11. Ownership and evolution
+
+<SVG ownership, evolution, migration, lifecycle-status, or change-hotspot diagrams as supported>
 
 - Documented owners:
 - Architectural decisions and compatibility constraints:
 - Active, stable, legacy, experimental, and generated areas:
 - Churn or migration signals:
 
-## 11. Safe-change map
+## 12. Safe-change map
+
+<SVG change-impact, regression-surface, verification, compatibility, migration, or rollback map>
 
 <Task-to-code table>
 
-## 12. Risks, conflicts, unknowns, and coverage
+## 13. Risks, conflicts, unknowns, and coverage
+
+<SVG risk relationship, uncertainty boundary, or coverage map when it reveals useful structure>
 
 <Risk table and coverage ledger>
 
-## 13. Recommended reading and practice route
+## 14. Recommended reading and practice route
 
 1. <file or symbol> — <what it teaches>
 2. ...
@@ -189,7 +226,7 @@ Key relationships and evidence:
 ## Focused-scope report
 
 ```markdown
-# Focused orientation: <scope>
+# Focused deep dive: <scope>
 
 ## 1. Scope boundary and location
 
@@ -201,9 +238,23 @@ Key relationships and evidence:
 - Depth, audience, and goal:
 - Assumptions and confidence:
 
-<Polished SVG highlighted scope map>
+## 2. Global overall architecture position
 
-## 2. Purpose, vocabulary, and responsibilities
+<Required polished SVG global overall architecture with the target highlighted>
+
+- Technical location: Project > system/domain > runtime/service/package > entrypoint/data/integration
+- Important surrounding components and relationships:
+- Evidence and unknowns:
+
+## 3. Business architecture position
+
+<Required polished SVG business architecture with the target highlighted>
+
+- Business location: Actor/outcome > value stream > domain/capability > feature or supporting enabler
+- Outcome or capabilities supported:
+- Evidence and unknowns:
+
+## 4. Purpose, vocabulary, and responsibilities
 
 - Business or technical purpose:
 - Actor/caller and observable outcome:
@@ -211,20 +262,24 @@ Key relationships and evidence:
 - Responsibilities explicitly outside this boundary:
 - Terms and status values:
 
-## 3. Entry surfaces and neighbors
+## 5. Entry surfaces and neighbors
+
+<SVG focused component/dependency/interface/event/job map>
 
 | Surface | Operation/topic/route | Caller | Handler | Auth/validation | Evidence |
 |---|---|---|---|---|---|
 
-## 4. End-to-end behavior
+## 6. End-to-end behavior
 
 - Happy path:
 - Important alternate paths:
 - Compact call or data chain:
 
-<Polished SVG sequence, state, or lineage diagram when useful>
+<One or more SVG process, sequence, decision, alternate, failure, retry, compensation, or manual-intervention diagrams>
 
-## 5. Detailed logic at requested depth
+## 7. Detailed logic at requested depth
+
+<SVG decision tree, state lifecycle, concurrency/transaction boundary, or rules map for each non-trivial area>
 
 1. Preconditions and normalization
 2. Authorization and feature gating
@@ -234,11 +289,15 @@ Key relationships and evidence:
 6. Integrations, events, jobs, and side effects
 7. Error, retry, rollback, compensation, and partial success
 
-## 6. Data and interface contracts
+## 8. Data and interface contracts
+
+<SVG entity relationship, data ownership, read/write, lineage, cache/consistency, API, event, and dependency diagrams as supported>
 
 <Interface and owned-data tables>
 
-## 7. Build, test, debug, and observe this scope
+## 9. Build, test, debug, and observe this scope
+
+<SVG local workflow, test-layer, fixture/dependency, and observability-signal diagrams as supported>
 
 - Local/development entrypoint:
 - Relevant configuration:
@@ -247,7 +306,9 @@ Key relationships and evidence:
 - Logs, metrics, traces, and audit:
 - Important uncovered paths:
 
-## 8. Safe-change boundary
+## 10. Safe-change boundary
+
+<SVG change-impact, regression, verification, rollout, and rollback map>
 
 - Likely entry files and symbols:
 - Invariants to preserve:
@@ -256,7 +317,7 @@ Key relationships and evidence:
 - Tests and telemetry to use for verification:
 - Likely regression and rollback concerns:
 
-## 9. Read next, risks, and parked discoveries
+## 11. Read next, risks, and parked discoveries
 
 - Reading route:
 - Material risks and unknowns:
@@ -279,11 +340,19 @@ Key relationships and evidence:
 - Confidence:
 - Most important caveat:
 
+## Global overall architecture position
+
+<Required polished SVG global overall architecture with the affected scope highlighted>
+
+## Business architecture position
+
+<Required polished SVG business architecture with the affected capability, value stage, or supporting enabler highlighted>
+
 ## Traced path
 
 `trigger -> entrypoint -> orchestration -> domain/state -> integration -> outcome`
 
-<Optional polished SVG focused map or sequence>
+<One or more SVG focused component, sequence, decision, state, data, failure, and impact views>
 
 ## Evidence and decision points
 
@@ -357,7 +426,10 @@ Use `Inspected`, `Sampled`, or `Not inspected`; never convert sample coverage in
 
 - State scope, depth, audience, goal, revision, and assumptions.
 - Explain purpose and vocabulary before implementation detail.
-- Put a focused scope on a minimal wider-system map.
+- Include separate validated global overall architecture and business architecture SVGs in every report.
+- In focused, task-led, and incident-led reports, highlight the target consistently in both baseline diagrams and state its technical and business locations.
+- Keep technical/runtime nodes out of the business architecture unless they form a clearly labeled capability-to-system bridge.
+- Account for every first-party top-level area in a whole-project takeover, while labeling sampled and uninspected implementation depth.
 - Trace active registration instead of relying on file names.
 - Include non-HTTP and asynchronous behavior when relevant.
 - Identify upstream and downstream relative to an explicit boundary.
@@ -366,6 +438,10 @@ Use `Inspected`, `Sampled`, or `Not inspected`; never convert sample coverage in
 - Treat Git history as a secondary signal, not ownership proof.
 - Include a safe-change and verification route when the goal involves modification or debugging.
 - Deliver diagrams as validated, visually inspected SVG artifacts rather than Mermaid source.
+- Treat the two baseline SVGs as the minimum, not the complete diagram set.
+- Add diagrams across every evidence-backed project dimension that benefits from a distinct view; do not impose a fixed maximum or restrict output to diagram types named in the templates.
+- Provide a diagram index and visual reading order when the portfolio is large.
+- Split overloaded diagrams and remove redundant or decorative ones instead of reducing useful visual coverage.
 - Keep diagrams, tables, terminology, call chains, and prose consistent.
 - State coverage limits and the cheapest next learning step.
 - Stop at the requested depth instead of emitting every template section mechanically.

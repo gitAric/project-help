@@ -1,4 +1,4 @@
 interface:
   display_name: "Project Help 项目熟悉"
-  short_description: "面向新人的项目导览、局部深挖、变更路径与清晰 SVG 架构图"
-  default_prompt: "使用 $project-help 按合适的范围、深度和角色视角熟悉当前项目或指定部分，输出证据充分的说明、上手路径和清晰 SVG 图。"
+  short_description: "完整项目接手、局部功能深挖及丰富 SVG 架构图谱"
+  default_prompt: "使用 $project-help 完整分析当前项目或指定功能，始终产出两张基线 SVG，并尽可能补充有独立信息价值且不限类型的 SVG 图谱。"
